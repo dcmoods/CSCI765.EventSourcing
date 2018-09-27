@@ -31,7 +31,7 @@ namespace Appointment.CommandStack.Sagas
         public void Handle(RequestAppointmentCommand message)
         {
             var request = AppointmentRequest.Factory.Create(message.RoomId, message.StartHour, 
-                message.Length, message.Name, message.Notes);
+                message.Length, message.UserName, message.Notes);
 
             var response = _repository.CreateAppointmentFromRequest(request);
             if (!response.Success)

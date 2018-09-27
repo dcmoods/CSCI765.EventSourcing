@@ -30,7 +30,8 @@ namespace Appointment.Infrastructure.Persistence.SqlServer.Data
         {
             modelBuilder.Entity<Appointment>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.ToTable("Appointment");
+                //entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -50,6 +51,7 @@ namespace Appointment.Infrastructure.Persistence.SqlServer.Data
 
             modelBuilder.Entity<Room>(entity =>
             {
+                entity.ToTable("Room");
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.Name).HasMaxLength(50);

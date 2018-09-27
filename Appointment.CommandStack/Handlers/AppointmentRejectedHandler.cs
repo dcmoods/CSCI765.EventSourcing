@@ -7,10 +7,10 @@ using System.Text;
 
 namespace Appointment.CommandStack.Handlers
 {
-    public class BookingRejectedHandler : Handler,
+    public class AppointmentRejectedHandler : Handler,
         IHandleMessage<AppointmentRejectedEvent>
     {
-        public BookingRejectedHandler(IEventStore eventStore) 
+        public AppointmentRejectedHandler(IEventStore eventStore) 
             : base(eventStore)
         {
         }
