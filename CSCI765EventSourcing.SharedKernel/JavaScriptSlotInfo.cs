@@ -11,6 +11,7 @@ namespace CSCI765EventSourcing.SharedKernel
         public string RoomId { get; set; }
         public string StartingAt { get; set; }
         public string Name { get; set; }
+        public string Notes { get; set; }
         public string Length { get; set; }
     }
 }

@@ -1,94 +1,220 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model Appointment.Web.Site.ViewModels.IndexViewModel
 
-<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
-    <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-    </ol>
-    <div class="carousel-inner" role="listbox">
-        <div class="item active">
-            <img src="~/images/banner1.svg" alt="ASP.NET" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    Learn how to build ASP.NET apps that can run anywhere.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525028&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/banner2.svg" alt="Visual Studio" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    There are powerful new features in Visual Studio for building modern web apps.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525030&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/banner3.svg" alt="Microsoft Azure" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    Learn how Microsoft's Azure cloud platform allows you to build, deploy, and scale web apps.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525027&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-    </div>
-    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-    </a>
-    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-    </a>
-</div>
 
 <div class="row">
-    <div class="col-md-3">
-        <h2>Application uses</h2>
-        <ul>
-            <li>Sample pages using ASP.NET Core MVC</li>
-            <li>Theming using <a href="https://go.microsoft.com/fwlink/?LinkID=398939">Bootstrap</a></li>
-        </ul>
+    <div class="col-xs-12 col-sm-6">
+        @if (Model.RoomSchedules.Count == 0)
+        {
+            <h2>No rooms found.</h2>
+            return;
+        }
+
+        <div role="tabpanel">
+            <!-- Nav tabs -->
+            <ul class="nav nav-pills" role="tablist">
+                @{ var firstTab = true; }
+                @foreach (var schedule in Model.RoomSchedules)
+                {
+                    var active = firstTab ? "active" : "";
+                    firstTab = false;
+                    var roomId = String.Format("room-{0}", schedule.RoomId);
+
+                    <li role="presentation" class="@active">
+                        <a href="#@roomId" aria-controls="@roomId" role="tab" data-toggle="tab" class="btn">
+                            @schedule.RoomName
+                        </a>
+                    </li>
+                }
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                @{ var firstTabContent = true; }
+                @foreach (var schedule in Model.RoomSchedules)
+                {
+                    var active = firstTabContent ? "active" : "";
+                    firstTabContent = false;
+                    var tabId = String.Format("room-{0}", schedule.RoomId);
+                    <div role="tabpanel" class="tab-pane @active" id="@tabId">
+                        <table class="table-bordered table table-condensed">
+                            @foreach (var slot in schedule.Slots)
+                            {
+                                var i = 1;
+                                do
+                                {
+                                    var display = slot.IsAvailable() ? "Available" : String.Format("Appointment : {0}", slot.AppointmentId);
+                                    var css = slot.IsAvailable() ? "slot-free" : "slot-taken";
+                                    var starting = slot.StartingAt + (i - 1);
+                                    <tr class="slot @css">
+                                        <td class="slot-hour">@String.Format("{0}:00", starting.ToString("D2"))</td>
+                                        <td>
+                                            @if (slot.IsAvailable())
+                                            {
+                                                <button onclick="schedule(@schedule.RoomId, @starting)">@display</button>
+                                            }
+                                            else
+                                            {
+                                                <span data-toggle="tooltip" data-placement="top">@display</span>
+                                                <button type="button" class="btn btn-default editbutton pull-right" data-id="@slot.AppointmentId" data-toggle="modal" data-target="#editappointment">
+                                                    Edit
+                                                </button>
+                                                <button type="button" class="btn btn-default viewbutton pull-right" data-id="@slot.AppointmentId" data-toggle="modal" data-target="#viewappointment">
+                                                    View
+                                                </button>
+                                            }
+                                        </td>
+                                    </tr>
+                                    i++;
+                                } while (i <= slot.Length);
+                            }
+                        </table>
+                    </div>
+                }
+            </div>
+
+        </div>
     </div>
-    <div class="col-md-3">
-        <h2>How to</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398600">Add a Controller and View</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699315">Manage User Secrets using Secret Manager.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699316">Use logging to log a message.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699317">Add packages using NuGet.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699319">Target development, staging or production environment.</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>Overview</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=518008">Conceptual overview of what is ASP.NET Core</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699320">Fundamentals of ASP.NET Core such as Startup and middleware.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398602">Working with Data</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398603">Security</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699321">Client side development</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699322">Develop on different platforms</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699323">Read more on the documentation site</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>Run &amp; Deploy</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517851">Run your app</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517853">Run tools such as EF migrations and more</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398609">Publish to Microsoft Azure Web Apps</a></li>
-        </ul>
+
+    <div class="col-xs-12 col-sm-6">
+        <button id="scheduleNow" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#appointmentPanel" aria-expanded="false" aria-controls="appointmentPanel">
+            schedule now
+        </button>
+        <div class="collapse" id="appointmentPanel">
+            <div class="well">
+                <form method="post" action="@Url.Action("add", "appointment")">
+                    <div class="form-group">
+                        <label for="roomid">room</label>
+                        <br />
+                        <select style="padding: 4px; width: 100%" name="roomid" id="roomid">
+                            @foreach (var c in Model.RoomSchedules)
+                            {
+                                <option value="@c.RoomId">@c.RoomName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="startHour">Time of the day</label>
+                        <input type="number" class="form-control" name="startHour" id="startHour" placeholder="Start time">
+                    </div>
+                    <div class="form-group">
+                        <label for="length">Length</label>
+                        <br />
+                        <select style="padding: 4px; width: 100%" name="length" id="length">
+                            <option value="1">1 hour</option>
+                            <option value="2">2 hours</option>
+                            <option value="3">3 hours</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="length">Name</label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="length">Notes</label>
+                        <input type="text" class="form-control" name="notes" id="notes" placeholder="Notes">
+                    </div>
+                    <button class="btn btn-success">Save</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="editappointment">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">appointment <span id="appointmentId"></span></h4>
+            </div>
+            <form method="post" action="@Url.Action("edit", "appointment")">
+                <div class="modal-body">
+
+                    <input type="hidden" id="current-id" name="id" />
+                    <input type="hidden" id="room-id" name="roomId" />
+                    <input type="text" id="current-hour" name="startHour" />
+                    <br />
+                    <input type="text" id="current-name" name="name" />
+                    <br />
+                    <input type="text" id="current-length" name="length" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="viewappointment">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">appointment <span id="viewAppointmentId"></span> :: History</h4>
+            </div>
+            <div class="modal-body">
+                <p id="history"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{ 
+
+<script type="text/javascript">
+    $(".editbutton").on("click", function () {
+        var appointmentId = $(this).data('id');
+        $("#appointmentId").html(appointmentId);
+        $("#current-id").val(appointmentId);
+
+        $.ajax({
+            url: ROOTSERVER + "/api/scheduling/" + appointmentId,
+            cache: false
+        }).done(function (data) {
+            $("#room-id").val(data.roomId);
+            $("#current-name").val(data.name);
+            $("#current-hour").val(data.startingAt);
+            $("#current-length").val(data.length);
+        });
+    });
+</script>
+
+ 
+
+<script type="text/javascript">
+    $(".viewbutton").on("click", function () {
+        var appointmentId = $(this).data('id');
+        $("#viewAppointmentId").html(appointmentId);
+
+        $.ajax({
+            url: ROOTSERVER + "/api/schedulinghistory/" + appointmentId,
+            cache: false
+        }).done(function (data) {
+            var html = "<table class='table'>";
+            html += "<thead><th>Action</th><th>When</th><th>room Id</th><th>Starting at</th><th>Length</th><th>Name</th><th>Notes</th></thead>";
+            for (var i = 0; i < data.changeList.length; i++) {
+                var change = data.changeList[i];
+                html += "<tr>";
+                html += "<td>" + change.action + "</td>";
+                html += "<td>" + change.when + "</td>";
+                html += "<td>" + change.roomId + "</td>";
+                html += "<td>" + change.startingAt + "</td>";
+                html += "<td>" + change.length + "</td>";
+                html += "<td>" + change.name + "</td>";
+                html += "<td>" + change.notes + "</td>";
+                html += "</tr>";
+            }
+            html += "</table>";
+            $("#history").html(html);
+        });
+    });
+</script>
+}

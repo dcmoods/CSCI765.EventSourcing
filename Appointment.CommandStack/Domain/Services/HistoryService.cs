@@ -28,13 +28,13 @@ namespace Appointment.CommandStack.Domain.Services
                         slot.When = createdEvent.When.ToLocalTime(); ;
                         slot.RoomId = createdEvent.Id;
                         break;
-                    //case "BookingUpdatedEvent":
-                    //    var updatedEvent = serializer.Deserialize<BookingUpdatedEvent>(e.Cargo);
-                    //    slot = updatedEvent.Data;
-                    //    slot.Action = "Updated";
-                    //    slot.When = updatedEvent.When.ToLocalTime();
-                    //    slot.BookingId = updatedEvent.Id;
-                    //    break;
+                    case "AppointmentUpdatedEvent":
+                        var updatedEvent = JsonConvert.DeserializeObject<AppointmentUpdatedEvent>(e.Cargo);
+                        slot = updatedEvent.Data;
+                        slot.Action = "Updated";
+                        slot.When = updatedEvent.When.ToLocalTime();                        
+                        slot.AppointmentId = updatedEvent.Id;
+                        break;                    
                 }
 
                 history.ChangeList.Add(slot);

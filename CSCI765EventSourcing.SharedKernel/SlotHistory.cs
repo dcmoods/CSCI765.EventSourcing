@@ -45,6 +45,9 @@ namespace CSCI765EventSourcing.SharedKernel
                 jsSlot.Name = String.IsNullOrWhiteSpace(change.Name) || change.Name == last.Name
                     ? ""
                     : change.Name;
+                jsSlot.Notes = String.IsNullOrWhiteSpace(change.Notes) || change.Notes == last.Notes
+                    ? ""
+                    : change.Notes;
 
                 jsSlot.Action = String.IsNullOrWhiteSpace(change.Action) ? "" : change.Action;
                 jsSlot.When = change.When.ToString("dd MMM yyyy HH:mm");

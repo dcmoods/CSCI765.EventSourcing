@@ -12,7 +12,8 @@ using System.Text;
 namespace Appointment.CommandStack.Sagas
 {
     public class AppointmentSaga : Saga,
-        IStartWithMessage<RequestAppointmentCommand>
+        IStartWithMessage<RequestAppointmentCommand>,
+        IHandleMessage<EditAppointmentCommand>
     {
         private readonly IRepository _repository;
 
@@ -44,6 +45,16 @@ namespace Appointment.CommandStack.Sagas
             var slotInfo = request.ToSlotInfo();
             var created = new AppointmentCreatedEvent(request.Id, response.AggregateId, slotInfo);
             Bus.RaiseEvent(created);
+        }
+
+        public void Handle(EditAppointmentCommand message)
+        {
+            var response = _repository.Update(message.AppointmentId, message.RoomId, message.StartHour, message.Length, message.UserName);
+            if(response.Success)
+            {
+                var updated = new AppointmentUpdatedEvent(message.AppointmentId, message.RoomId, message.StartHour, message.Length, message.UserName);
+                Bus.RaiseEvent(updated);
+            }
         }
     }
 }

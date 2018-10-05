@@ -36,13 +36,14 @@ namespace Appointment.Infrastructure.Persistence.SqlServer.Repository
             return response;
         }
 
-        public CommandResponse Update(int appointmentId, int hour, int length, string name)
+        public CommandResponse Update(int appointmentId, int roomId, int hour, int length, string name)
         {
             var appointment = (from a in _persistenceStore.Appointments where a.Id == appointmentId select a).FirstOrDefault();
             if (appointment == null)
                 return CommandResponse.Fail;
 
             appointment.Id = appointmentId;
+            appointment.RoomId = roomId;
             appointment.StartingAt = hour;
             appointment.Length = length;
             appointment.Name = name;

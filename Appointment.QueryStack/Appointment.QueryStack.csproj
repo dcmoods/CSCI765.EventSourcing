@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Appointment.Infrastructure.Persistence.SqlServer\Appointment.Infrastructure.Persistence.SqlServer.csproj" />
+  </ItemGroup>
+
+</Project>

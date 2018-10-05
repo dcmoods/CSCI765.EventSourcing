@@ -2,3 +2,9 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+var ROOTSERVER = "";
+
+function schedule(roomId, hour) {
+    $("#startHour").val(hour);
+    $("#appointmentPanel").collapse('show');
+}

@@ -5,28 +5,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Appointment.Web.Site.Models;
+using Appointment.Web.Site.Application;
 
 namespace Appointment.Web.Site.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly HomeService _homeService;
+
+        public HomeController()
+        {
+            _homeService = new HomeService();
+        }
+
         public IActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
+            var model = _homeService.GetIndexViewModel();
+            return View(model);
         }
 
         public IActionResult Privacy()

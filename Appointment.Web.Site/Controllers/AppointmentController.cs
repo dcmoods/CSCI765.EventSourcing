@@ -17,5 +17,12 @@ namespace Appointment.Web.Site.Controllers
             _service.AddAppointment(roomId, startHour, length, name, notes);
             return RedirectToAction("index", "home");
         }
+
+        [HttpPost]
+        public IActionResult Edit(int id, int roomId, int startHour, int length, string name)
+        {
+            _service.EditAppointment(id, roomId, startHour, length, name);
+            return RedirectToAction("index", "home");
+        }
     }
 }
